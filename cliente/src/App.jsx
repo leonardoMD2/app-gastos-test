@@ -1,53 +1,30 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom' 
-import { Line } from 'react-chartjs-2';
-import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    Title,
-    Tooltip,
-    Legend,
-    Filler,
-} from 'chart.js';
 
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    Title,
-    Tooltip,
-    Legend,
-    Filler
-);
-
+import { ChartsGastos,tiposDeGastos, API, listaPersonas } from './utils/utils';
 
 import './App.css'
-const API = "http://localhost:4000/gastos"
-console.log(API)
+
+
 function Post() {
   const [nombre, setNombre] = useState("")
-  const [tipo, setTipo] = useState("")
   const [mes, setMes] = useState("")
   const [monto, setMonto] = useState(0.0)
   const [fecha, setFecha] = useState("")
   const [error, setError] = useState(false)
   const [done, setDone] = useState(false)
   const [realizado, setRealizado] = useState("Leo")
-
+  const [tipo2, setTipo2] = useState("Varios")
 
  const req = {
     method: "POST",
     headers: { 'Content-Type': 'application/json' },
-    body:JSON.stringify({ nombre:nombre, tipo:tipo, mes:mes, monto:monto, fecha:fecha, realizado:realizado})
+    body:JSON.stringify({ nombre:nombre, tipo:tipo2, mes:mes, monto:monto, fecha:fecha, realizado:realizado})
   } 
 
 const handleAll = () => {
-  console.log(nombre, tipo, mes, monto, fecha, realizado)
-  if (nombre != "" && tipo != "" && mes != "" && monto != "" && fecha != "" && realizado != ""){
+  console.log(nombre, tipo2, mes, monto, fecha, realizado)
+  if (nombre != "" && tipo2 != "" && mes != "" && monto != "" && fecha != "" && realizado != ""){
     fetch(API, req)
     setError(false)
     setDone(true)
@@ -58,10 +35,7 @@ const handleAll = () => {
   
 
 }
-const options = [
-  { value: 'Leo', label: 'Leo' },
-  { value: 'Sofi', label: 'Sofi' },
-];
+console.log("testing list", tipo2)
 const styleAlertError = error === true ? "flex" : "none"
 const styleAlertDone = done === true ? "flex" : "none"
 
@@ -70,13 +44,22 @@ const styleAlertDone = done === true ? "flex" : "none"
       <h1>Posting de Gastos</h1>
       <section className='post-form'> 
       <select value={realizado} onChange={(e) => {setRealizado(e.target.value)}}>
-        <option >{options[0].label}</option>
-        <option >{options[1].label}</option>
+        <option >{listaPersonas[0].label}</option>
+        <option >{listaPersonas[1].label}</option>
       </select>
       <label htmlFor="title">Nombre</label>
         <input type="text" value={nombre} name="nombre" id="" onChange={(e) => {setNombre(e.target.value)}}/>
         <label htmlFor="year">Tipo</label>
-        <input type="text" name="tipo" value={tipo} id="" onChange={(e) => {setTipo(e.target.value)}}/>
+        <select value={tipo2} onChange={(e => {setTipo2(e.target.value)})}>
+            {
+
+              tiposDeGastos.map(item => {
+                return(
+                  <option key={item}>{item}</option>
+                )
+              })
+            }
+        </select>
         <label htmlFor="stars">Mes</label>
         <input type="text" name="mes" value={mes} id="" onChange={(e) => {setMes((e.target.value))}}/>
         <label htmlFor="urlImg">Monto</label>
@@ -160,72 +143,9 @@ const MainContainer = ({persona1="Sofi", persona2="Leo"}) =>{
 
 )}
 
-const ChartsGastos = ({chartPerson}) => {
-
-  const gastos = [];
-  const nombre = [];
-  const meses = ["Enero", "Febrero", "Marzo" , "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
-  const [data, setData] = useState(null)
-  const [mes, setMes] = useState("Enero")
-  useEffect(() =>  {
-    fetch(API)
-      .then(resp => resp.json())
-      .then(resp => setData(resp))
-  }, [])
 
 
-  data?.map(gasto => {
-    if(mes === gasto.mes && chartPerson == gasto.realizado){
-      gastos.push(gasto.monto)
-      nombre.push(gasto.nombre)
-    }
 
-  })
-
-  
-  var midata = {
-      labels: nombre,
-      datasets: [ // Cada una de las líneas del gráfico
-          {
-              label: 'Beneficios',
-              data: gastos,
-              tension: 0.5,
-              fill : true,
-              borderColor: 'rgba( 46, 204, 113 , 0.5)',
-              backgroundColor: 'rgba(  14, 102, 85 , 1)',
-              pointRadius: 5,
-              pointBackgroundColor: 'rgba(72, 201, 176)',
-          }
-         
-      ],
-  };
-  
-  var misoptions = {
-      scales : {
-          y : {
-              min : 0
-          },
-          x: {
-              ticks: { color: 'rgb(255, 255, 255)'}
-          }
-      }
-  };
-console.log("elegido:" ,mes)
-  return(
-    <>
-    <select value={mes} onChange={(e) => {setMes(e.target.value)}}>
-      {meses.map(mesActual => {
-        return(
-          <option >{mesActual}</option>
-        )
-      })
- }
-    </select>
-      <Line  data={midata} options={misoptions}/>
-    </>
-    
-  )
-}
 export{
   MainContainer,
   Fetch,
