@@ -16,14 +16,17 @@ function Post() {
   const [realizado, setRealizado] = useState("Leo")
   const [tipo2, setTipo2] = useState("Varios")
 
- const req = {
+  const styleAlertError = error === true ? "flex" : "none"
+  const styleAlertDone = done === true ? "flex" : "none"
+ 
+  const req = {
     method: "POST",
     headers: { 'Content-Type': 'application/json' },
     body:JSON.stringify({ nombre:nombre, tipo:tipo2, mes:mes, monto:monto, fecha:fecha, realizado:realizado})
   } 
 
 const handleAll = () => {
-  console.log(nombre, tipo2, mes, monto, fecha, realizado)
+
   if (nombre != "" && tipo2 != "" && mes != "" && monto != "" && fecha != "" && realizado != ""){
     fetch(API, req)
     setError(false)
@@ -35,19 +38,19 @@ const handleAll = () => {
   
 
 }
-console.log("testing list", tipo2)
-const styleAlertError = error === true ? "flex" : "none"
-const styleAlertDone = done === true ? "flex" : "none"
+
+
 
   return (
     <>
       <h1>Posting de Gastos</h1>
       <section className='post-form'> 
+      <label htmlFor="Efectuado">Efectuado por</label>
       <select value={realizado} onChange={(e) => {setRealizado(e.target.value)}}>
         <option >{listaPersonas[0].label}</option>
         <option >{listaPersonas[1].label}</option>
       </select>
-      <label htmlFor="title">Nombre</label>
+      <label htmlFor="nombre">Nombre</label>
         <input type="text" value={nombre} name="nombre" id="" onChange={(e) => {setNombre(e.target.value)}}/>
         <label htmlFor="year">Tipo</label>
         <select value={tipo2} onChange={(e => {setTipo2(e.target.value)})}>
@@ -60,9 +63,9 @@ const styleAlertDone = done === true ? "flex" : "none"
               })
             }
         </select>
-        <label htmlFor="stars">Mes</label>
+        <label htmlFor="mes">Mes</label>
         <input type="text" name="mes" value={mes} id="" onChange={(e) => {setMes((e.target.value))}}/>
-        <label htmlFor="urlImg">Monto</label>
+        <label htmlFor="monto">Monto</label>
         <input type="text" name="monto" value={monto} id="" onChange={(e) => {setMonto(parseFloat(e.target.value))}}/>
         <label htmlFor="Gender">Fecha: YYYY-MM-DD</label>
         <input type="text" name="fecha"value={fecha} id="" onChange={(e) => {setFecha(e.target.value)}}/>

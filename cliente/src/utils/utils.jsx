@@ -29,6 +29,8 @@ export const listaPersonas = [
     { value: 'Leo', label: 'Leo' },
     { value: 'Sofi', label: 'Sofi' },
   ];
+
+
 export const ChartsGastos = ({chartPerson}) => {
 
      
@@ -83,7 +85,7 @@ export const ChartsGastos = ({chartPerson}) => {
   
     
   
-  console.log("elegido:" ,mes)
+
     return(
       <>
       <select value={mes} onChange={(e) => {setMes(e.target.value)}}>
