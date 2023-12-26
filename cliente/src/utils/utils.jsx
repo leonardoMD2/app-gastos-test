@@ -1,5 +1,6 @@
 import { Line } from 'react-chartjs-2';
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom' 
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -99,5 +100,16 @@ export const ChartsGastos = ({chartPerson}) => {
         <Line  data={midata} options={misoptions}/>
       </>
       
+    )
+  }
+
+export const CommonBtn = ({refer, text}) => {
+    return(
+      <Link className="button" to={refer}>{text}</Link>
+    )
+  }
+export const Alert = ({text, type}) => {
+    return (
+      <p className={type}>{text}</p>
     )
   }

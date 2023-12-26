@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom' 
 
-import { ChartsGastos,tiposDeGastos, API, listaPersonas } from './utils/utils';
+
+import { ChartsGastos,tiposDeGastos, API, listaPersonas, CommonBtn, Alert } from './utils/utils';
 
 import './App.css'
 
@@ -84,7 +84,7 @@ const handleAll = () => {
   )
 }
 
-function Fetch({who}) {
+function Fetch({persona}) {
 
   const [data, setData] = useState(null)
   useEffect(() =>  {
@@ -100,7 +100,7 @@ function Fetch({who}) {
  
         data?.map(gasto => {
           console.log(gasto.realizado)
-          if(gasto.realizado === who){
+          if(gasto.realizado === persona){
             return(
               <div className='movies' key={gasto._id}>
                 <h3 className='black-type'>{gasto.nombre}</h3>
@@ -118,30 +118,60 @@ function Fetch({who}) {
   )
 }
 
-const CommonBtn = ({refer, text}) => {
+function GastosPorPersona () {
+  const [person, setPerson] = useState("Leo")
+  const [data, setData] = useState([])
+
+  useEffect(() =>  {
+    fetch(`http://localhost:4000/gastos/${person}`)
+      .then(resp => resp.json())
+      .then(resp => setData(resp))
+  }, [person])
+
+ console.log(data["totales"]?.Total)
+
   return(
-    <Link className="button" to={refer}>{text}</Link>
+  <>
+
+    <select value={person} onChange={(e) => (setPerson(e.target.value))} >
+        <option >{listaPersonas[0].label}</option>
+        <option >{listaPersonas[1].label}</option>
+    </select>
+    <section>
+     
+    {
+        data.totales && (
+          Object.entries(data.totales).map(([key, value]) => {
+            return(
+              <p>{key} - {value}</p>
+            )
+          })
+        )
+      }
+     
+ 
+    </section>
+  </>
   )
+ 
 }
-const Alert = ({text, type}) => {
-  return (
-    <p className={type}>{text}</p>
-  )
-}
+
 
 const MainContainer = ({persona1="Sofi", persona2="Leo"}) =>{
   return(
   <>
     <h1>Fetching de gastos</h1>
     <h2>Gastos de: {persona1}</h2>
-    <Fetch who={persona1}/>
+    <Fetch persona={persona1}/>
     <ChartsGastos chartPerson={persona1}/>
     <h2>Gastos de: {persona2}</h2>
-    <Fetch who={persona2}/>
+    <Fetch persona={persona2}/>
     <ChartsGastos chartPerson={persona2}/>
     <div style={{margin:"15px"}}>
         <CommonBtn refer={"post"} text="Agregar gasto"/>
-      </div>
+    </div>
+    <GastosPorPersona/>
+
   </>
 
 )}
@@ -152,5 +182,6 @@ const MainContainer = ({persona1="Sofi", persona2="Leo"}) =>{
 export{
   MainContainer,
   Fetch,
+  GastosPorPersona,
   Post
 }
